@@ -48,6 +48,7 @@ Before you rush in and use these methods, however, you definitely need to be awa
 * There is no real concept of namespacing or hierarchies. Using "namespace:level1:level2:level3:..." is idiomatic, but not
   enforced.
 * All methods return the emitter, so they can also be chained together.
+* Methods named following the pattern `onEvent` on the emitting object will automatically be called.
 
 ## Reference
 
@@ -124,4 +125,20 @@ processing may block your user interface or other user interactions.
 
 > NOTE: The handlers are wrapped with a `try`...`catch` and errors are logged to the console.
 
+# Changes
 
+## 0.1.3
+
+* Updated to Babel 5.x; fixed broken tests
+* Emit now calls local onEvent handlers without any registration required
+
+## 0.1.2
+
+* Export Emitter by default
+* Bug fixes; tests
+
+## 0.1.1
+
+## 0.1.0
+
+* First public release
