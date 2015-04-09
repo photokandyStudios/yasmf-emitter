@@ -49,7 +49,7 @@ function tryWrapper(handler, ...args) {
     }
 }
 
-export class Emitter {
+export default class Emitter {
     constructor(options) {
         // private properties
         this[_eventHandlers] = new core.Map();
@@ -80,6 +80,7 @@ export class Emitter {
      * @param {string|Array<string>|Object} evt
      * @param {function} [handler]
      * @param {Object} [thisArg]
+     * @throws {TypeError}
      * @returns {Emitter}
      */
     on(evt, handler, thisArg = null) {
@@ -184,12 +185,14 @@ export class Emitter {
      */
     once(evt, handler, thisArg = null) {
         let wrapper, self = this;
+        // add a wrapper around the handler and listen to the requested event
         this.on(evt, wrapper = function (...args) {
             try {
                 handler.apply(thisArg, ...args);
             } catch (err) {
                 console.error(`ONCE handler received an error: ${err.message}, ${JSON.stringify(err)}`);
             } finally {
+                // remove the wrapper so that the event doesn't call us again
                 self.off(evt, wrapper, thisArg);
             }
         }, thisArg);
@@ -205,6 +208,25 @@ export class Emitter {
     emitSyncFlag(evt, args, async = true) {
         let sender = this,
             eH = this[_eventHandlers];
+
+        // emit locally first to onEvent handlers
+        try {
+            let sanitizedEvent = evt.replace(/\:/g, "_"),
+                ProperEventCase = sanitizedEvent[0].toUpperCase() + sanitizedEvent.substr(1),
+                onProperEventCase = "on" + ProperEventCase,
+                localHandler;
+
+            if ( localHandler = this[onProperEventCase]) {
+                if (async) {
+                    setImmediate(() => { tryWrapper(localHandler.bind(sender), sender, evt, ...args); });
+                } else {
+                    tryWrapper(localHandler.bind(sender), sender, evt, ...args);
+                }
+            }
+        } catch (err) {
+            console.log("EMITTER WARNING: Something broke while trying to call local methods.", err);
+        }
+
         core.Array.from(eH)
             // for all the registered event categories, filter out the events that we really care about
             .filter(([potentialEvent]) => {
