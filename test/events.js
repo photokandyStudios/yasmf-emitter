@@ -3,7 +3,7 @@
 
 let should = require("should");
 
-import {Emitter} from "../src/index.js";
+import Emitter from "../src/index.js";
 
 describe("Emitter Events", () => {
     describe("Singular on", () => {
@@ -133,5 +133,30 @@ describe("Emitter Events", () => {
         it("emitter should now have property called set to 1.", () => {
             should(o).have.property("called").and.be.equal(1);
         });
-    })
+    });
+
+    describe("Call local method", () => {
+        let o = new Emitter();
+        o.onClick = function (sender, notice, ...args) {
+            console.log("hi!");
+            this.called = true;
+        };
+        o.emit("click");
+        it("emitter should now have property called set to true.", () => {
+            should(o).have.property("called").and.be.equal(true);
+        });
+    });
+    describe("Call local method and external", () => {
+        let o = new Emitter();
+        o.called = 0;
+        o.onClick = function (sender, notice, ...args) {
+            console.log("hi!");
+            this.called++;
+        };
+        o.on("click", function(...args) { this.called++; }, o);
+        o.emit("click");
+        it("emitter should now have property called set to 2.", () => {
+            should(o).have.property("called").and.be.equal(2);
+        });
+    });
 });
