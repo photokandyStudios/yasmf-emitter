@@ -135,7 +135,7 @@ describe("Emitter Events", () => {
         });
     });
 
-    describe("Call local method", () => {
+    describe("Call local method using onProperCase", () => {
         let o = new Emitter();
         o.onClick = function (sender, notice, ...args) {
             console.log("hi!");
@@ -157,6 +157,50 @@ describe("Emitter Events", () => {
         o.emit("click");
         it("emitter should now have property called set to 2.", () => {
             should(o).have.property("called").and.be.equal(2);
+        });
+    });
+    describe("Call local method using onlowercase", () => {
+        let o = new Emitter();
+        o.onclick = function (sender, notice, ...args) {
+            console.log("hi!");
+            this.called = true;
+        };
+        o.emit("click");
+        it("emitter should now have property called set to true.", () => {
+            should(o).have.property("called").and.be.equal(true);
+        });
+    });
+    describe("Call local method using on:eventcase", () => {
+        let o = new Emitter();
+        o["on:click"] = function (sender, notice, ...args) {
+            console.log("hi!");
+            this.called = true;
+        };
+        o.emit("click");
+        it("emitter should now have property called set to true.", () => {
+            should(o).have.property("called").and.be.equal(true);
+        });
+    });
+    describe("Call local method using onlower_case", () => {
+        let o = new Emitter();
+        o.onuser_clicked = function (sender, notice, ...args) {
+            console.log("hi!");
+            this.called = true;
+        };
+        o.emit("user:clicked");
+        it("emitter should now have property called set to true.", () => {
+            should(o).have.property("called").and.be.equal(true);
+        });
+    });
+    describe("Call local method using onProper_case", () => {
+        let o = new Emitter();
+        o.onUser_clicked = function (sender, notice, ...args) {
+            console.log("hi!");
+            this.called = true;
+        };
+        o.emit("user:clicked");
+        it("emitter should now have property called set to true.", () => {
+            should(o).have.property("called").and.be.equal(true);
         });
     });
 });
