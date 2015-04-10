@@ -1,6 +1,6 @@
 {
   "name": "yasmf-emitter",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "YASMF's Event Emitter",
   "main": "lib/index.js",
   "scripts": {
