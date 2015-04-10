@@ -48,7 +48,7 @@ Before you rush in and use these methods, however, you definitely need to be awa
 * There is no real concept of namespacing or hierarchies. Using "namespace:level1:level2:level3:..." is idiomatic, but not
   enforced.
 * All methods return the emitter, so they can also be chained together.
-* Methods named following the pattern `onEvent` on the emitting object will automatically be called.
+* Methods named following the pattern `onEvent`, `on:event`, `onevent` on the emitting object will automatically be called.
 
 ## Reference
 
@@ -118,6 +118,21 @@ Emits an event to all the handlers, and passes along any optional data. The hand
 
 > NOTE: The handlers are wrapped with a `try`...`catch` and errors are logged to the console.
 
+Local event handlers will be called automatically, if they exist. For example:
+
+```
+this.emit("tap");
+// would check for a handler (in this order) at
+// this["on:tap"], this.ontap, this.onTap. The
+// first one found is called.
+
+this.emit("user:tapped");
+// would check for a handler (in this order) at
+// this["on:user:tapped"], this.onuser_tapped, this.onUser_tapped.
+// The first one found is called.
+// Note that ":" is transformed to "_" in the latter two methods.
+```
+
 ### emitSync( event [, data, ...] )
 
 Emits an event __synchronously__ to all the handlers, and passes along any optional data. Be careful, as handlers with a lot of
@@ -126,6 +141,11 @@ processing may block your user interface or other user interactions.
 > NOTE: The handlers are wrapped with a `try`...`catch` and errors are logged to the console.
 
 # Changes
+
+## 0.1.5
+
+* Adds `this["on:" + eventName]` as a local handler name
+* Adds `this.oneventname` as a local handler name (vs `this.onEventname`).
 
 ## 0.1.4
 
