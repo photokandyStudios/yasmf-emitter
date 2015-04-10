@@ -61,6 +61,9 @@ export default class Emitter {
         // automatically call our init; other objects will eventually be inheriting from
         // this, and `init` is nice to have called automatically
         this.init(options);
+
+        // let any handlers know too.
+        this.emit("created", options);
     }
 
     init() {
@@ -288,6 +291,13 @@ export default class Emitter {
             }
         }
         return this;
+    }
+
+    /**
+     * Destroys the object; removes all handlers
+     */
+    destroy() {
+        this[_eventHandlers] = null;
     }
 
 }

@@ -127,6 +127,11 @@ processing may block your user interface or other user interactions.
 
 # Changes
 
+## 0.1.4
+
+* Emits `created` event when the base constructor finishes
+* Adds `destroy` method for lifecycle management
+
 ## 0.1.3
 
 * Updated to Babel 5.x; fixed broken tests
