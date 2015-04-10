@@ -214,12 +214,21 @@ export default class Emitter {
 
         // emit locally first to onEvent handlers
         try {
-            let sanitizedEvent = evt.replace(/\:/g, "_"),
+            let onEvent = "on:" + evt,
+                sanitizedEvent = evt.replace(/\:/g, "_"),
+                onSanitizedEvent = "on" + sanitizedEvent,
                 ProperEventCase = sanitizedEvent[0].toUpperCase() + sanitizedEvent.substr(1),
                 onProperEventCase = "on" + ProperEventCase,
                 localHandler;
 
-            if ( localHandler = this[onProperEventCase]) {
+            if (this[onEvent]) {
+                localHandler = this[onEvent];
+            } else if (this[onSanitizedEvent]) {
+                localHandler = this[onSanitizedEvent];
+            } else if (this[onProperEventCase]) {
+                localHandler = this[onProperEventCase];
+            }
+            if (localHandler) {
                 if (async) {
                     setImmediate(() => { tryWrapper(localHandler.bind(sender), sender, evt, ...args); });
                 } else {
